@@ -11,12 +11,22 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # practice.
 find_package(Boost 1.65.0 COMPONENTS system REQUIRED)
 
+# --- Find Threads ---
+# Required for std::thread on Linux and macOS
+find_package(Threads REQUIRED)
+
 # --- Platform-specific setup ---
+set(PLATFORM_LIBS "")
 if(WIN32)
     # Specific settings for Windows
-    # This ensures that symbols are exported correctly when building DLLs,
-    # though not strictly necessary for executables.
+    # This ensures that symbols are exported correctly when building DLLs
     set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+    
+    # Define _WIN32_WINNT (Windows 7 and up) to avoid Boost.Asio warnings and define Windows leaner compilation
+    add_compile_definitions(_WIN32_WINNT=0x0601 WIN32_LEAN_AND_MEAN)
+    
+    # Windows native socket libraries required by Boost.Asio
+    set(PLATFORM_LIBS ws2_32 wsock32)
 elseif(APPLE)
     # Specific settings for macOS
     # For example, you might want to create application bundles
@@ -34,9 +44,9 @@ add_executable(server server.cpp)
 add_executable(client client.cpp)
 
 # --- Link libraries ---
-# Link the server and client executables to the Boost libraries
-target_link_libraries(server PRIVATE ${Boost_LIBRARIES})
-target_link_libraries(client PRIVATE ${Boost_LIBRARIES})
+# Link the server and client executables to the Boost libraries and platform-specific dependencies
+target_link_libraries(server PRIVATE ${Boost_LIBRARIES} Threads::Threads ${PLATFORM_LIBS})
+target_link_libraries(client PRIVATE ${Boost_LIBRARIES} Threads::Threads ${PLATFORM_LIBS})
 
 # --- Installation ---
 # Define where the executables should be installed when the 'install' target is built.
