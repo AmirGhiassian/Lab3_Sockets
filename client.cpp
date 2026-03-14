@@ -74,6 +74,11 @@ int main(int argc, char *argv[]) {
       std::cout << "> ";
       std::getline(std::cin, input_line);
 
+      // Remove potential carriage return
+      if (!input_line.empty() && input_line.back() == '\r') {
+        input_line.pop_back();
+      }
+
       // Send the line to the server
       boost::asio::write(socket, boost::asio::buffer(input_line + "\n"));
 
@@ -90,6 +95,11 @@ int main(int argc, char *argv[]) {
       std::istream response_stream(&response_buf);
       std::string response_line;
       std::getline(response_stream, response_line);
+
+      // Remove potential carriage return
+      if (!response_line.empty() && response_line.back() == '\r') {
+        response_line.pop_back();
+      }
 
       // Print the server's response
       std::cout << "Server: " << response_line << std::endl;
