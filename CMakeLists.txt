@@ -9,9 +9,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Boost.Asio is mostly header-only.
 # Boost 1.69.0 made the 'system' component header-only. Boost 1.90.0 removed the compiled library entirely.
 find_package(Boost 1.65.0 REQUIRED)
-if(Boost_VERSION LESS 106900)
-    find_package(Boost 1.65.0 COMPONENTS system REQUIRED)
-endif()
 
 # --- Find Threads ---
 # Required for std::thread on Linux and macOS
