@@ -31,10 +31,7 @@ int main(int argc, char *argv[]) {
       port = argv[2];
     }
 
-    // The port 50501 is used if specified
-    if (argc > 2 && std::string(argv[2]) == "50501") {
-      port = "50501";
-    }
+    
 
     boost::asio::io_context io_context;
     tcp::socket socket(io_context);
@@ -48,7 +45,8 @@ int main(int argc, char *argv[]) {
         break; // If connection succeeds, exit the loop
       } catch (const boost::system::system_error &e) {
         std::cerr << "Error: Could not connect to the server at "
-                  << server_address << ":" << port << "." << std::endl;
+                  << server_address << ":" << port
+                  << ". Reason: " << e.what() << std::endl;
         std::cerr
             << "Please ensure the server is running and the address is correct."
             << std::endl;
